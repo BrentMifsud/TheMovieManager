@@ -10,12 +10,12 @@ import Foundation
 
 struct RequestTokenResponse: Codable {
 	let success: Bool
-	let expires: String
-	let token: String
+	let expiresAt: String
+	let requestToken: String
 
 	enum CodingKeys: String, CodingKey {
 		case success
-		case expires = "expires_at"
-		case token = "request_token"
+		case expiresAt = "expires_at"
+		case requestToken = "request_token"
 	}
 }

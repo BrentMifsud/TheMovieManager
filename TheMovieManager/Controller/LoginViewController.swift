@@ -23,14 +23,31 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginTapped(_ sender: UIButton) {
-		TMDBClient.getRequestToken { (succeeded, error) in
-			print("Request Token: \(TMDBClient.Auth.requestToken)")
-		}
+		TMDBClient.getRequestToken(completion: handleRequestToken(success:error:))
 //		performSegue(withIdentifier: "completeLogin", sender: nil)
     }
     
     @IBAction func loginViaWebsiteTapped() {
         performSegue(withIdentifier: "completeLogin", sender: nil)
     }
+
+	func handleRequestToken(success: Bool, error: Error?){
+		if success {
+			print("Request Token: \(TMDBClient.Auth.requestToken)")
+			DispatchQueue.main.async {
+				TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLogin(success:error:))
+			}
+		} else {
+			print(error ?? "Get Request Token Failed")
+		}
+	}
+
+	func handleLogin(success: Bool, error: Error?) {
+		if success {
+			print("Request Token: \(TMDBClient.Auth.requestToken)")
+		} else {
+			print(error ?? "Get Request Token Failed")
+		}
+	}
     
 }

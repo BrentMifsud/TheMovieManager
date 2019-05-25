@@ -24,11 +24,13 @@ class TMDBClient {
         
         case getWatchlist
 		case getRequestToken
+		case login
         
         var stringValue: String {
             switch self {
             case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
+			case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
 			}
         }
         
@@ -66,8 +68,39 @@ class TMDBClient {
 				let responseObject = try decoder.decode(RequestTokenResponse.self, from: data)
 				completion(true, nil)
 
-				Auth.requestToken = responseObject.token
+				Auth.requestToken = responseObject.requestToken
 			} catch {
+				completion(false, error)
+			}
+		}
+		task.resume()
+	}
+
+	class func login(username: String, password: String, completion: @escaping (Bool, Error?) -> Void){
+		let body = LoginRequest(username: username, password: password, requestToken: Auth.requestToken)
+		var request = URLRequest(url: Endpoints.login.url)
+		request.httpMethod = "POST"
+		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+		do {
+			request.httpBody = try JSONEncoder().encode(body)
+		} catch {
+			print("Failed to Encode Login Request into JSON")
+			completion(false, error)
+		}
+
+		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+			guard let data = data else {
+				completion(false, error)
+				return
+			}
+
+			do {
+				let responseObject = try JSONDecoder().decode(RequestTokenResponse.self, from: data)
+				Auth.requestToken = responseObject.requestToken
+				completion(true, nil)
+			} catch {
+				print("Failed to decode Login Token Response")
 				completion(false, error)
 			}
 		}
