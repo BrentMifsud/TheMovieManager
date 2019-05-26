@@ -27,113 +27,136 @@ class TMDBClient {
 		case login
 		case getSessionId
 		case webAuth
-        
-        var stringValue: String {
-            switch self {
-            case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+		case deleteSession
+
+		var stringValue: String {
+			switch self {
+			case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
 			case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
 			case .getSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
 			case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
-			}
-        }
-        
-        var url: URL {
-            return URL(string: stringValue)!
-        }
-    }
-    
-    class func getWatchlist(completion: @escaping ([Movie], Error?) -> Void) {
-        let task = URLSession.shared.dataTask(with: Endpoints.getWatchlist.url) { data, response, error in
-            guard let data = data else {
-                completion([], error)
-                return
-            }
-            let decoder = JSONDecoder()
-            do {
-                let responseObject = try decoder.decode(MovieResults.self, from: data)
-                completion(responseObject.results, nil)
-            } catch {
-                completion([], error)
-            }
-        }
-        task.resume()
-    }
-
-	class func getRequestToken(completion: @escaping (Bool, Error?) -> Void) {
-		let task = URLSession.shared.dataTask(with: Endpoints.getRequestToken.url) { (data, response, error) in
-			guard let data = data else {
-				completion(false, error)
-				return
-			}
-
-			let decoder = JSONDecoder()
-			do{
-				let responseObject = try decoder.decode(RequestTokenResponse.self, from: data)
-				completion(true, nil)
-
-				Auth.requestToken = responseObject.requestToken
-			} catch {
-				completion(false, error)
+			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
 			}
 		}
-		task.resume()
+
+		var url: URL {
+			return URL(string: stringValue)!
+		}
 	}
 
-	class func login(username: String, password: String, completion: @escaping (Bool, Error?) -> Void){
-		let body = LoginRequest(username: username, password: password, requestToken: Auth.requestToken)
-		var request = URLRequest(url: Endpoints.login.url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-		do {
-			request.httpBody = try JSONEncoder().encode(body)
-		} catch {
-			print("Failed to Encode Login Request into JSON")
-			completion(false, error)
-		}
-
-		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+	class func taskForGetRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) {
+		let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
 			guard let data = data else {
-				completion(false, error)
+				DispatchQueue.main.async {
+					completion(nil, error)
+				}
 				return
 			}
 
 			do {
-				let responseObject = try JSONDecoder().decode(RequestTokenResponse.self, from: data)
-				Auth.requestToken = responseObject.requestToken
-				completion(true, nil)
+				let responseObject = try JSONDecoder().decode(ResponseType.self, from: data)
+				DispatchQueue.main.async {
+					completion(responseObject, nil)
+				}
 			} catch {
-				print("Failed to decode Login Token Response")
-				completion(false, error)
+				DispatchQueue.main.async {
+					completion(nil, error)
+				}
+
 			}
 		}
 		task.resume()
+
 	}
 
-	class func	getSessionId(completion: @escaping (Bool, Error?) -> Void){
-		let body = PostSession(requestToken: Auth.requestToken)
-		var request = URLRequest(url: Endpoints.getSessionId.url)
+	class func taskForPostRequest<RequestType: Codable, ResponseType: Decodable>(url: URL, body: RequestType, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) {
+		var request = URLRequest(url: url)
 		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpBody = try! JSONEncoder().encode(body)
 
 		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 			guard let data = data else {
-				completion(false, error)
+				DispatchQueue.main.async {
+					completion(nil, error)
+				}
 				return
 			}
 
 			do {
-				let responseObject = try JSONDecoder().decode(SessionResponse.self, from: data)
-				Auth.sessionId = responseObject.sessionId
-				completion(true, nil)
+				let responseObject = try JSONDecoder().decode(ResponseType.self, from: data)
+				DispatchQueue.main.async {
+					completion(responseObject, nil)
+				}
 			} catch {
-				print("Failed to decode session response")
-				completion(false, error)
+				DispatchQueue.main.async {
+					completion(nil, error)
+				}
 			}
 		}
 		task.resume()
 	}
-    
+
+	class func getWatchlist(completion: @escaping ([Movie], Error?) -> Void) {
+		taskForGetRequest(url: Endpoints.getWatchlist.url, responseType: MovieResults.self) { (response, error) in
+			if let response = response {
+				completion(response.results, nil)
+			} else {
+				completion([], error)
+			}
+		}
+	}
+
+
+	class func getRequestToken(completion: @escaping (Bool, Error?) -> Void) {
+		taskForGetRequest(url: Endpoints.getRequestToken.url, responseType: RequestTokenResponse.self) { (response, error) in
+			if let response = response {
+				Auth.requestToken = response.requestToken
+				completion(true, nil)
+			} else {
+				completion(false, error)
+			}
+		}
+	}
+
+	class func login(username: String, password: String, completion: @escaping (Bool, Error?) -> Void){
+		let body = LoginRequest(username: username, password: password, requestToken: Auth.requestToken)
+		taskForPostRequest(url: Endpoints.login.url, body: body, responseType: RequestTokenResponse.self) { (response, error) in
+			if let response = response {
+				Auth.requestToken = response.requestToken
+				completion(true, nil)
+			} else {
+				completion(false, nil)
+			}
+		}
+	}
+
+	class func	getSessionId(completion: @escaping (Bool, Error?) -> Void){
+		let body = PostSession(requestToken: Auth.requestToken)
+		taskForPostRequest(url: Endpoints.getSessionId.url, body: body, responseType: SessionResponse.self) { (response, error) in
+			if let response = response {
+				Auth.sessionId = response.sessionId
+				completion(true, nil)
+			} else {
+				completion(false, error)
+			}
+		}
+	}
+
+	class func logout(completion: @escaping (Bool, Error?) -> Void){
+		let body = LogoutRequest(sessionId: Auth.sessionId)
+		var request = URLRequest(url: Endpoints.deleteSession.url)
+		request.httpMethod = "DELETE"
+		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+		request.httpBody = try! JSONEncoder().encode(body)
+
+		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+			Auth.requestToken = ""
+			Auth.sessionId = ""
+			completion(true, nil)
+		}
+		task.resume()
+	}
+
 }

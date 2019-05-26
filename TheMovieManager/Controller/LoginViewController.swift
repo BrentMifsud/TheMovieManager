@@ -9,23 +9,23 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-
+	
 	@IBOutlet weak var emailTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var loginButton: UIButton!
 	@IBOutlet weak var loginViaWebsiteButton: UIButton!
-
+	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-
+		
 		emailTextField.text = ""
 		passwordTextField.text = ""
 	}
-
+	
 	@IBAction func loginTapped(_ sender: UIButton) {
 		TMDBClient.getRequestToken(completion: handleRequestToken(success:error:))
 	}
-
+	
 	@IBAction func loginViaWebsiteTapped() {
 		TMDBClient.getRequestToken { (success, error) in
 			if success{
@@ -35,38 +35,30 @@ class LoginViewController: UIViewController {
 			}
 		}
 	}
-
+	
 	func handleRequestToken(success: Bool, error: Error?){
 		if success {
-			print("Request Token: \(TMDBClient.Auth.requestToken)")
-			DispatchQueue.main.async {
-				TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLogin(success:error:))
-			}
+			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLogin(success:error:))
 		} else {
 			print(error ?? "Get Request Token Failed")
 		}
 	}
-
+	
 	func handleLogin(success: Bool, error: Error?) {
 		if success {
-			print("Request Token: \(TMDBClient.Auth.requestToken)")
-			DispatchQueue.main.async {
-				TMDBClient.getSessionId(completion: self.handleSessionID(success:error:))
-			}
+			TMDBClient.getSessionId(completion: self.handleSessionID(success:error:))
 		} else {
 			print(error ?? "Get Request Token Failed")
 		}
 	}
-
+	
 	func handleSessionID(success: Bool, error: Error?) {
 		if success {
 			print("Session ID: \(TMDBClient.Auth.sessionId)")
-			DispatchQueue.main.async {
-				self.performSegue(withIdentifier: "completeLogin", sender: nil)
-			}
+			self.performSegue(withIdentifier: "completeLogin", sender: nil)
 		} else {
 			print(error ?? "Get Session ID Failed")
 		}
 	}
-
+	
 }

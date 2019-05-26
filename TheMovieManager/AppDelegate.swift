@@ -49,7 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 			TMDBClient.getSessionId(completion: loginVC.handleSessionID(success:error:))
 		}
-
 		return true
 	}
     
