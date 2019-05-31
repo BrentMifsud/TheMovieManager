@@ -28,6 +28,7 @@ class MovieDetailViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = movie.title
+		imageView.image = UIImage(named: "PosterPlaceholder")
 
 		TMDBClient.downloadPosterImage(posterPath: movie.posterPath ?? "", completion: handleDownloadPosterImage(data:error:))
         

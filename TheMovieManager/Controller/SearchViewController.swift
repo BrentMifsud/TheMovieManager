@@ -67,6 +67,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         let movie = movies[indexPath.row]
         
         cell.textLabel?.text = "\(movie.title) - \(movie.releaseYear)"
+		cell.imageView?.image = UIImage(named: "PosterPlaceholder")
 
 		if let posterPath = movie.posterPath {
 			TMDBClient.downloadPosterImage(posterPath: posterPath) { (data, error) in
