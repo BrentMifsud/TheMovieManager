@@ -28,6 +28,7 @@ class TMDBClient {
 		case getSessionId
 		case webAuth
 		case deleteSession
+		case getFavorites
 
 		var stringValue: String {
 			switch self {
@@ -37,6 +38,7 @@ class TMDBClient {
 			case .getSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
 			case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
 			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
+			case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			}
 		}
 
@@ -108,6 +110,15 @@ class TMDBClient {
 		}
 	}
 
+	class func getFavorites(completion: @escaping ([Movie], Error?) -> Void) {
+		taskForGetRequest(url: Endpoints.getFavorites.url, responseType: MovieResults.self) { (response, error) in
+			if let response = response {
+				completion(response.results, nil)
+			} else {
+				completion([], error)
+			}
+		}
+	}
 
 	class func getRequestToken(completion: @escaping (Bool, Error?) -> Void) {
 		taskForGetRequest(url: Endpoints.getRequestToken.url, responseType: RequestTokenResponse.self) { (response, error) in
