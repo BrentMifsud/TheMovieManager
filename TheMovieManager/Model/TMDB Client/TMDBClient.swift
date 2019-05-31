@@ -42,8 +42,8 @@ class TMDBClient {
 			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
 			case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+			case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			}
-			case .markFavorite: return 
 		}
 
 		var url: URL {
@@ -118,7 +118,7 @@ class TMDBClient {
 		let body = MarkWatchList(mediaType: "movie", mediaId: movieId, watchlist: watchlist)
 		taskForPostRequest(url: Endpoints.markWatchlist.url, body: body, responseType: TMDBResponse.self) { (response, error) in
 			if let response = response {
-				completion(response.statusCode == 1 || response.statusCode == 12 || response.statusCode == 13, nil)
+				completion(response.isSuccess(), nil)
 			} else {
 				completion(false, error)
 			}
@@ -131,6 +131,17 @@ class TMDBClient {
 				completion(response.results, nil)
 			} else {
 				completion([], error)
+			}
+		}
+	}
+
+	class func markFavorite(movieId: Int, favorite: Bool, completion: @escaping (Bool, Error?) -> Void){
+		let body = MarkFavorite(mediaType: "movie", mediaId: movieId, favorite: favorite)
+		taskForPostRequest(url: Endpoints.markFavorite.url, body: body, responseType: TMDBResponse.self) { (response, error) in
+			if let response = response {
+				completion(response.isSuccess(), nil)
+			} else {
+				completion(false, error)
 			}
 		}
 	}

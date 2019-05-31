@@ -16,4 +16,14 @@ struct TMDBResponse: Codable {
 		case statusCode = "status_code"
 		case statusMessage = "status_message"
 	}
+
+	func isSuccess() -> Bool {
+		switch statusCode {
+		case 1, 12, 13:
+			return true
+		default:
+			return false
+		}
+	}
+
 }
