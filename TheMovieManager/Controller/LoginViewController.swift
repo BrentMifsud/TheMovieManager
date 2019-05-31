@@ -14,7 +14,8 @@ class LoginViewController: UIViewController {
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var loginButton: UIButton!
 	@IBOutlet weak var loginViaWebsiteButton: UIButton!
-	
+	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
@@ -23,10 +24,12 @@ class LoginViewController: UIViewController {
 	}
 	
 	@IBAction func loginTapped(_ sender: UIButton) {
+		setLoggingIn(true)
 		TMDBClient.getRequestToken(completion: handleRequestToken(success:error:))
 	}
 	
 	@IBAction func loginViaWebsiteTapped() {
+		setLoggingIn(true)
 		TMDBClient.getRequestToken { (success, error) in
 			if success{
 				DispatchQueue.main.async {
@@ -40,6 +43,7 @@ class LoginViewController: UIViewController {
 		if success {
 			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLogin(success:error:))
 		} else {
+			setLoggingIn(false)
 			print(error ?? "Get Request Token Failed")
 		}
 	}
@@ -48,16 +52,25 @@ class LoginViewController: UIViewController {
 		if success {
 			TMDBClient.getSessionId(completion: self.handleSessionID(success:error:))
 		} else {
+			setLoggingIn(false)
 			print(error ?? "Get Request Token Failed")
 		}
 	}
 	
 	func handleSessionID(success: Bool, error: Error?) {
+		setLoggingIn(false)
 		if success {
-			print("Session ID: \(TMDBClient.Auth.sessionId)")
 			self.performSegue(withIdentifier: "completeLogin", sender: nil)
 		} else {
 			print(error ?? "Get Session ID Failed")
+		}
+	}
+
+	func setLoggingIn(_ loggingIn: Bool) {
+		if loggingIn {
+			activityIndicator.startAnimating()
+		} else {
+			activityIndicator.stopAnimating()
 		}
 	}
 	

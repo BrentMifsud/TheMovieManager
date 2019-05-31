@@ -124,6 +124,8 @@
 		2316885B2121C951003C820E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2316884C2121C92C003C820E /* Main.storyboard */,
+				231688512121C92D003C820E /* LaunchScreen.storyboard */,
 				2316888C2122322D003C820E /* Colors.swift */,
 				231688692121CADA003C820E /* LoginButton.swift */,
 				2316888E2122646A003C820E /* GradientView.swift */,
@@ -148,9 +150,7 @@
 		2316885D2121C962003C820E /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				2316884C2121C92C003C820E /* Main.storyboard */,
 				2316884F2121C92D003C820E /* Assets.xcassets */,
-				231688512121C92D003C820E /* LaunchScreen.storyboard */,
 				2311AC092178E31500137A84 /* Colors.xcassets */,
 			);
 			path = Assets;
