@@ -30,17 +30,17 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="6au-LF-Utu">
-                                <rect key="frame" x="16" y="213" width="343" height="261"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="6au-LF-Utu">
+                                <rect key="frame" x="16" y="195.5" width="343" height="296"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Login with Email" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mar-mo-B2j">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="32"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </label>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qrT-hl-seK" customClass="LoginTextField" customModule="TheMovieManager" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="32.5" width="343" height="32"/>
+                                        <rect key="frame" x="0.0" y="44" width="343" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="k43-y2-3qE"/>
                                         </constraints>
@@ -49,7 +49,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="R9P-8h-YZr" customClass="LoginTextField" customModule="TheMovieManager" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="76.5" width="343" height="32"/>
+                                        <rect key="frame" x="0.0" y="88" width="343" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="Qle-eY-VG8"/>
                                         </constraints>
@@ -58,7 +58,7 @@
                                         <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XfA-1k-xWc" customClass="LoginButton" customModule="TheMovieManager" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="120.5" width="343" height="32"/>
+                                        <rect key="frame" x="0.0" y="132" width="343" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="nn3-xL-QsK"/>
                                         </constraints>
@@ -68,13 +68,13 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OR" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4rJ-8G-fwl">
-                                        <rect key="frame" x="0.0" y="164.5" width="343" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="176" width="343" height="32"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OHw-m7-7gh" customClass="LoginButton" customModule="TheMovieManager" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="197" width="343" height="32"/>
+                                        <rect key="frame" x="0.0" y="220" width="343" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="Wh6-Ej-5FW"/>
                                         </constraints>
@@ -84,7 +84,7 @@
                                         </connections>
                                     </button>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="WMn-Lf-WGT">
-                                        <rect key="frame" x="0.0" y="241" width="343" height="20"/>
+                                        <rect key="frame" x="0.0" y="264" width="343" height="32"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <constraints>
