@@ -29,7 +29,12 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
+		TMDBClient.searchForMovie(query: searchText) { (movies, error) in
+			if let movies = movies {
+				self.movies = movies
+				self.tableView.reloadData()
+			}
+		}
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -62,6 +67,14 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         let movie = movies[indexPath.row]
         
         cell.textLabel?.text = "\(movie.title) - \(movie.releaseYear)"
+
+		if let posterPath = movie.posterPath {
+			TMDBClient.downloadPosterImage(posterPath: posterPath) { (data, error) in
+				guard let data = data else { return }
+				cell.imageView?.image = UIImage(data: data)
+				cell.setNeedsLayout()
+			}
+		}
         
         return cell
     }

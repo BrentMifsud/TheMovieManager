@@ -34,6 +34,7 @@ class TMDBClient {
 		case markWatchlist
 		case markFavorite
 		case getPosterImage(String)
+		case searchMovie(String)
 
 		var stringValue: String {
 			switch self {
@@ -47,6 +48,7 @@ class TMDBClient {
 			case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
+			case .searchMovie(let movieQuery): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
 			}
 		}
 
@@ -132,6 +134,16 @@ class TMDBClient {
 		}
 	}
 
+	class func searchForMovie(query: String, completion: @escaping ([Movie]?, Error?) -> Void){
+		taskForGetRequest(url: Endpoints.searchMovie(query).url, responseType: MovieResults.self) { (response, error) in
+			if let response = response {
+				completion(response.results, nil)
+			} else {
+				completion([], error)
+			}
+		}
+	}
+
 	class func logout(completion: @escaping (Bool, Error?) -> Void){
 		let body = LogoutRequest(sessionId: Auth.sessionId)
 		var request = URLRequest(url: Endpoints.deleteSession.url)
@@ -150,10 +162,14 @@ class TMDBClient {
 	class func downloadPosterImage(posterPath: String, completion: @escaping (Data?, Error?) -> Void) {
 		let task = URLSession.shared.dataTask(with: Endpoints.getPosterImage(posterPath).url) { (data, response, error) in
 			guard let data = data else {
-				completion(nil, error)
+				DispatchQueue.main.async {
+					completion(nil, error)
+				}
 				return
 			}
-			completion(data, nil)
+			DispatchQueue.main.async {
+				completion(data, nil)
+			}
 		}
 		task.resume()
 	}
