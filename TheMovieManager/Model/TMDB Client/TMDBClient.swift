@@ -29,6 +29,8 @@ class TMDBClient {
 		case webAuth
 		case deleteSession
 		case getFavorites
+		case markWatchlist
+		case markFavorite
 
 		var stringValue: String {
 			switch self {
@@ -39,7 +41,9 @@ class TMDBClient {
 			case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
 			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
 			case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+			case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 			}
+			case .markFavorite: return 
 		}
 
 		var url: URL {
@@ -106,6 +110,17 @@ class TMDBClient {
 				completion(response.results, nil)
 			} else {
 				completion([], error)
+			}
+		}
+	}
+
+	class func markWatchlist(movieId: Int, watchlist: Bool, completion: @escaping (Bool, Error?) -> Void) {
+		let body = MarkWatchList(mediaType: "movie", mediaId: movieId, watchlist: watchlist)
+		taskForPostRequest(url: Endpoints.markWatchlist.url, body: body, responseType: TMDBResponse.self) { (response, error) in
+			if let response = response {
+				completion(response.statusCode == 1 || response.statusCode == 12 || response.statusCode == 13, nil)
+			} else {
+				completion(false, error)
 			}
 		}
 	}
