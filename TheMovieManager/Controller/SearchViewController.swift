@@ -69,7 +69,12 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         
         let movie = movies[indexPath.row]
         
-        cell.textLabel?.text = "\(movie.title) - \(movie.releaseYear)"
+        cell.textLabel?.text = "\(movie.title)"
+
+		if !movie.releaseYear.isEmpty {
+			cell.textLabel?.text?.append(" - \(movie.releaseYear)")
+		}
+
 		cell.imageView?.image = UIImage(named: "PosterPlaceholder")
 
 		if let posterPath = movie.posterPath {
