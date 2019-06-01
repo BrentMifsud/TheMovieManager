@@ -12,6 +12,8 @@ import UIKit
 class TMDBClient {
 
 	static let apiKey = "ENTER API KEY HERE"
+	static let encoder = JSONEncoder()
+	static let decoder = JSONDecoder()
 
 	struct Auth {
 		static var accountId = 0
@@ -34,21 +36,21 @@ class TMDBClient {
 		case markWatchlist
 		case markFavorite
 		case getPosterImage(String)
-		case searchMovie(String)
+		case search(String)
 
 		var stringValue: String {
 			switch self {
-			case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-			case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
-			case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
-			case .getSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
-			case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
-			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
-			case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-			case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-			case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-			case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
-			case .searchMovie(let movieQuery): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+				case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+				case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
+				case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
+				case .getSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
+				case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
+				case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
+				case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+				case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+				case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+				case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
+				case .search(let movieQuery): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
 			}
 		}
 
@@ -135,7 +137,7 @@ class TMDBClient {
 	}
 
 	class func searchForMovie(query: String, completion: @escaping ([Movie]?, Error?) -> Void) -> URLSessionTask {
-		let task = taskForGetRequest(url: Endpoints.searchMovie(query).url, responseType: MovieResults.self) { (response, error) in
+		let task = taskForGetRequest(url: Endpoints.search(query).url, responseType: MovieResults.self) { (response, error) in
 			if let response = response {
 				completion(response.results, nil)
 			} else {
@@ -150,7 +152,7 @@ class TMDBClient {
 		var request = URLRequest(url: Endpoints.deleteSession.url)
 		request.httpMethod = "DELETE"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.httpBody = try! JSONEncoder().encode(body)
+		request.httpBody = try! encoder.encode(body)
 
 		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 			Auth.requestToken = ""
@@ -189,7 +191,7 @@ extension TMDBClient {
 			}
 
 			do {
-				let responseObject = try JSONDecoder().decode(ResponseType.self, from: data)
+				let responseObject = try decoder.decode(ResponseType.self, from: data)
 				DispatchQueue.main.async {
 					completion(responseObject, nil)
 				}
@@ -208,7 +210,7 @@ extension TMDBClient {
 		var request = URLRequest(url: url)
 		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.httpBody = try! JSONEncoder().encode(body)
+		request.httpBody = try! encoder.encode(body)
 
 		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 			guard let data = data else {
@@ -219,7 +221,7 @@ extension TMDBClient {
 			}
 
 			do {
-				let responseObject = try JSONDecoder().decode(ResponseType.self, from: data)
+				let responseObject = try decoder.decode(ResponseType.self, from: data)
 				DispatchQueue.main.async {
 					completion(responseObject, nil)
 				}

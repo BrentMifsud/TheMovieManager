@@ -25,7 +25,7 @@ class LoginViewController: UIViewController {
 	
 	@IBAction func loginTapped(_ sender: UIButton) {
 		setLoggingIn(true)
-		TMDBClient.getRequestToken(completion: handleRequestToken(success:error:))
+		TMDBClient.getRequestToken(completion: handleRequestTokenResponse(success:error:))
 	}
 	
 	@IBAction func loginViaWebsiteTapped() {
@@ -36,33 +36,6 @@ class LoginViewController: UIViewController {
 					UIApplication.shared.open(TMDBClient.Endpoints.webAuth.url, options:[:], completionHandler: nil)
 				}
 			}
-		}
-	}
-	
-	func handleRequestToken(success: Bool, error: Error?){
-		if success {
-			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLogin(success:error:))
-		} else {
-			setLoggingIn(false)
-			print(error ?? "Get Request Token Failed")
-		}
-	}
-	
-	func handleLogin(success: Bool, error: Error?) {
-		if success {
-			TMDBClient.getSessionId(completion: self.handleSessionID(success:error:))
-		} else {
-			setLoggingIn(false)
-			print(error ?? "Get Request Token Failed")
-		}
-	}
-	
-	func handleSessionID(success: Bool, error: Error?) {
-		setLoggingIn(false)
-		if success {
-			self.performSegue(withIdentifier: "completeLogin", sender: nil)
-		} else {
-			print(error ?? "Get Session ID Failed")
 		}
 	}
 
@@ -78,4 +51,33 @@ class LoginViewController: UIViewController {
 		loginViaWebsiteButton.isEnabled = !loggingIn
 	}
 	
+}
+
+extension LoginViewController {
+	func handleRequestTokenResponse(success: Bool, error: Error?){
+		if success {
+			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLoginResponse(success:error:))
+		} else {
+			setLoggingIn(false)
+			print(error ?? "Get Request Token Failed")
+		}
+	}
+
+	func handleLoginResponse(success: Bool, error: Error?) {
+		if success {
+			TMDBClient.getSessionId(completion: self.handleSessionIDResponse(success:error:))
+		} else {
+			setLoggingIn(false)
+			print(error ?? "Get Request Token Failed")
+		}
+	}
+
+	func handleSessionIDResponse(success: Bool, error: Error?) {
+		setLoggingIn(false)
+		if success {
+			self.performSegue(withIdentifier: "completeLogin", sender: nil)
+		} else {
+			print(error ?? "Get Session ID Failed")
+		}
+	}
 }

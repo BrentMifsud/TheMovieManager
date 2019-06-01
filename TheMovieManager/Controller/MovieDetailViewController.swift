@@ -30,24 +30,44 @@ class MovieDetailViewController: UIViewController {
         navigationItem.title = movie.title
 		imageView.image = UIImage(named: "PosterPlaceholder")
 
-		TMDBClient.downloadPosterImage(posterPath: movie.posterPath ?? "", completion: handleDownloadPosterImage(data:error:))
+		TMDBClient.downloadPosterImage(posterPath: movie.posterPath ?? "", completion: handlePosterImageResponse(data:error:))
         
         toggleBarButton(watchlistBarButtonItem, enabled: isWatchlist)
         toggleBarButton(favoriteBarButtonItem, enabled: isFavorite)
         
     }
-
-	func handleDownloadPosterImage(data: Data?,error: Error?) {
-		guard let data = data else { return }
-
-		DispatchQueue.main.async {
-			self.imageView.image = UIImage(data: data)
-		}
-	}
     
     @IBAction func watchlistButtonTapped(_ sender: UIBarButtonItem) {
         TMDBClient.markWatchlist(movieId: movie.id, watchlist: !isWatchlist, completion: handleWatchlistResponse(success:error:))
     }
+
+    
+    @IBAction func favoriteButtonTapped(_ sender: UIBarButtonItem) {
+		TMDBClient.markFavorite(movieId: movie.id, favorite: !isFavorite, completion: handleFavoriteResponse(success:error:))
+    }
+    
+    func toggleBarButton(_ button: UIBarButtonItem, enabled: Bool) {
+        if enabled {
+            button.tintColor = UIColor.primaryDark
+        } else {
+            button.tintColor = UIColor.gray
+        }
+    }
+    
+    
+}
+
+extension MovieDetailViewController {
+	func handleFavoriteResponse(success: Bool, error: Error?){
+		if success {
+			if isFavorite {
+				MovieModel.favorites = MovieModel.favorites.filter() {$0 != self.movie}
+			} else {
+				MovieModel.favorites.append(self.movie)
+			}
+			toggleBarButton(favoriteBarButtonItem, enabled: isFavorite)
+		}
+	}
 
 	func handleWatchlistResponse(success: Bool, error: Error?){
 		if success {
@@ -59,29 +79,12 @@ class MovieDetailViewController: UIViewController {
 			toggleBarButton(watchlistBarButtonItem, enabled: isWatchlist)
 		}
 	}
-    
-    @IBAction func favoriteButtonTapped(_ sender: UIBarButtonItem) {
-		TMDBClient.markFavorite(movieId: movie.id, favorite: !isFavorite, completion: handleFavoriteButtonTapped(success:error:))
-    }
 
-	func handleFavoriteButtonTapped(success: Bool, error: Error?){
-		if success {
-			if isFavorite {
-				MovieModel.favorites = MovieModel.favorites.filter() {$0 != self.movie}
-			} else {
-				MovieModel.favorites.append(self.movie)
-			}
-			toggleBarButton(favoriteBarButtonItem, enabled: isFavorite)
+	func handlePosterImageResponse(data: Data?,error: Error?) {
+		guard let data = data else { return }
+
+		DispatchQueue.main.async {
+			self.imageView.image = UIImage(data: data)
 		}
 	}
-    
-    func toggleBarButton(_ button: UIBarButtonItem, enabled: Bool) {
-        if enabled {
-            button.tintColor = UIColor.primaryDark
-        } else {
-            button.tintColor = UIColor.gray
-        }
-    }
-    
-    
 }

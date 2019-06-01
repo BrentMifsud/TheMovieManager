@@ -19,10 +19,10 @@ struct TMDBResponse: Codable {
 
 	func isSuccess() -> Bool {
 		switch statusCode {
-		case 1, 12, 13:
-			return true
-		default:
-			return false
+			case 1, 12, 13:
+				return true
+			default:
+				return false
 		}
 	}
 
