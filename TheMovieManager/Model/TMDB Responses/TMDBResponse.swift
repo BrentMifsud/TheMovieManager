@@ -27,3 +27,9 @@ struct TMDBResponse: Codable {
 	}
 
 }
+
+extension TMDBResponse: LocalizedError {
+	var errorDescription: String? {
+		return self.statusMessage
+	}
+}

@@ -50,6 +50,12 @@ class LoginViewController: UIViewController {
 		loginButton.isEnabled = !loggingIn
 		loginViaWebsiteButton.isEnabled = !loggingIn
 	}
+
+	func showLoginFailure(message: String) {
+		let alertVC = UIAlertController(title: "Login Failed", message: message, preferredStyle: .alert)
+		alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+		show(alertVC, sender: nil)
+	}
 	
 }
 
@@ -59,7 +65,7 @@ extension LoginViewController {
 			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLoginResponse(success:error:))
 		} else {
 			setLoggingIn(false)
-			print(error ?? "Get Request Token Failed")
+			showLoginFailure(message: error?.localizedDescription ?? "")
 		}
 	}
 
@@ -68,7 +74,7 @@ extension LoginViewController {
 			TMDBClient.getSessionId(completion: self.handleSessionIDResponse(success:error:))
 		} else {
 			setLoggingIn(false)
-			print(error ?? "Get Request Token Failed")
+			showLoginFailure(message: error?.localizedDescription ?? "")
 		}
 	}
 
@@ -77,7 +83,7 @@ extension LoginViewController {
 		if success {
 			self.performSegue(withIdentifier: "completeLogin", sender: nil)
 		} else {
-			print(error ?? "Get Session ID Failed")
+			showLoginFailure(message: error?.localizedDescription ?? "")
 		}
 	}
 }

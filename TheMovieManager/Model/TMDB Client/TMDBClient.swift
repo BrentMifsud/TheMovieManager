@@ -119,7 +119,7 @@ class TMDBClient {
 				Auth.requestToken = response.requestToken
 				completion(true, nil)
 			} else {
-				completion(false, nil)
+				completion(false, error)
 			}
 		}
 	}
@@ -196,10 +196,16 @@ extension TMDBClient {
 					completion(responseObject, nil)
 				}
 			} catch {
-				DispatchQueue.main.async {
-					completion(nil, error)
+				do {
+					let errorResponse = try decoder.decode(TMDBResponse.self, from: data) as Error
+					DispatchQueue.main.async {
+						completion(nil, errorResponse)
+					}
+				} catch {
+					DispatchQueue.main.async {
+						completion(nil, error)
+					}
 				}
-
 			}
 		}
 		task.resume()
@@ -226,8 +232,15 @@ extension TMDBClient {
 					completion(responseObject, nil)
 				}
 			} catch {
-				DispatchQueue.main.async {
-					completion(nil, error)
+				do {
+					let errorResponse = try decoder.decode(TMDBResponse.self, from: data) as Error
+					DispatchQueue.main.async {
+						completion(nil, errorResponse)
+					}
+				} catch {
+					DispatchQueue.main.async {
+						completion(nil, error)
+					}
 				}
 			}
 		}
