@@ -134,14 +134,15 @@ class TMDBClient {
 		}
 	}
 
-	class func searchForMovie(query: String, completion: @escaping ([Movie]?, Error?) -> Void){
-		taskForGetRequest(url: Endpoints.searchMovie(query).url, responseType: MovieResults.self) { (response, error) in
+	class func searchForMovie(query: String, completion: @escaping ([Movie]?, Error?) -> Void) -> URLSessionTask {
+		let task = taskForGetRequest(url: Endpoints.searchMovie(query).url, responseType: MovieResults.self) { (response, error) in
 			if let response = response {
 				completion(response.results, nil)
 			} else {
 				completion([], error)
 			}
 		}
+		return task
 	}
 
 	class func logout(completion: @escaping (Bool, Error?) -> Void){
@@ -178,7 +179,7 @@ class TMDBClient {
 
 //Http Task Methods
 extension TMDBClient {
-	class func taskForGetRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) {
+	@discardableResult class func taskForGetRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionTask {
 		let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
 			guard let data = data else {
 				DispatchQueue.main.async {
@@ -200,7 +201,7 @@ extension TMDBClient {
 			}
 		}
 		task.resume()
-
+		return task
 	}
 
 	class func taskForPostRequest<RequestType: Codable, ResponseType: Decodable>(url: URL, body: RequestType, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) {
