@@ -13,7 +13,7 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var watchlistBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var favoriteBarButtonItem: UIBarButtonItem!
-    
+
     var movie: Movie!
     
     var isWatchlist: Bool {
@@ -31,7 +31,7 @@ class MovieDetailViewController: UIViewController {
 		imageView.image = UIImage(named: "PosterPlaceholder")
 
 		TMDBClient.downloadPosterImage(posterPath: movie.posterPath ?? "", completion: handlePosterImageResponse(data:error:))
-        
+
         toggleBarButton(watchlistBarButtonItem, enabled: isWatchlist)
         toggleBarButton(favoriteBarButtonItem, enabled: isFavorite)
         
@@ -83,8 +83,10 @@ extension MovieDetailViewController {
 	func handlePosterImageResponse(data: Data?,error: Error?) {
 		guard let data = data else { return }
 
+		weak var movieDetailVC = self
+
 		DispatchQueue.main.async {
-			self.imageView.image = UIImage(data: data)
+			movieDetailVC?.imageView.image = UIImage(data: data)
 		}
 	}
 }
