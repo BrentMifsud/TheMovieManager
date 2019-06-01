@@ -75,5 +75,22 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         performSegue(withIdentifier: "showDetail", sender: nil)
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		return true
+	}
+
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		guard editingStyle == .delete else { return }
+
+		let selectedMovie = MovieModel.favorites[indexPath.row]
+
+		TMDBClient.markFavorite(movieId: selectedMovie.id, favorite: false) { (success, error) in
+			if success {
+				MovieModel.favorites.remove(at: indexPath.row)
+				tableView.reloadData()
+			}
+		}
+	}
     
 }

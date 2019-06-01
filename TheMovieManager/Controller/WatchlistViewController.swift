@@ -74,5 +74,21 @@ extension WatchlistViewController: UITableViewDataSource, UITableViewDelegate {
         performSegue(withIdentifier: "showDetail", sender: nil)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
+
+	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		return true
+	}
+
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		guard editingStyle == .delete else { return }
+
+		let selectedMovie = MovieModel.watchlist[indexPath.row]
+
+		TMDBClient.markWatchlist(movieId: selectedMovie.id, watchlist: false) { (success, error) in
+			if success {
+				MovieModel.watchlist.remove(at: indexPath.row)
+				tableView.reloadData()
+			}
+		}
+	}
 }
