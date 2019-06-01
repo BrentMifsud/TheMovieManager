@@ -36,7 +36,7 @@ class TMDBClient {
 		case markWatchlist
 		case markFavorite
 		case getPosterImage(String)
-		case search(String)
+		case search(String, Int)
 
 		var stringValue: String {
 			switch self {
@@ -50,7 +50,7 @@ class TMDBClient {
 				case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 				case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
 				case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
-				case .search(let movieQuery): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+				case .search(let movieQuery, let page): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
 			}
 		}
 
@@ -136,12 +136,12 @@ class TMDBClient {
 		}
 	}
 
-	class func searchForMovie(query: String, completion: @escaping ([Movie]?, Error?) -> Void) -> URLSessionTask {
-		let task = taskForGetRequest(url: Endpoints.search(query).url, responseType: MovieResults.self) { (response, error) in
+	@discardableResult class func searchForMovie(query: String, page: Int = 1, completion: @escaping (MovieResults?, Error?) -> Void) -> URLSessionTask {
+		let task = taskForGetRequest(url: Endpoints.search(query, page).url, responseType: MovieResults.self) { (response, error) in
 			if let response = response {
-				completion(response.results, nil)
+				completion(response, nil)
 			} else {
-				completion([], error)
+				completion(nil, error)
 			}
 		}
 		return task

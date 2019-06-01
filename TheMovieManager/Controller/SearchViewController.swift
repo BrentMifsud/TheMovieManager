@@ -18,6 +18,10 @@ class SearchViewController: UIViewController {
     var selectedIndex = 0
 
 	var currentSearchTask: URLSessionTask?
+
+	var currentPageNumber: Int = 0
+
+	var maxPageCount: Int = 0
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
@@ -32,10 +36,13 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 		currentSearchTask?.cancel()
-		currentSearchTask = TMDBClient.searchForMovie(query: searchText) { (movies, error) in
-			if let movies = movies {
-				self.movies = movies
-				self.tableView.reloadData()
+		currentSearchTask = TMDBClient.searchForMovie(query: searchText) { (movieResults, error) in
+			if let movieResults = movieResults {
+				weak var searchVC = self
+				searchVC?.movies = movieResults.results
+				searchVC?.currentPageNumber = movieResults.page
+				searchVC?.maxPageCount = movieResults.totalPages
+				searchVC?.tableView.reloadData()
 			}
 		}
     }
@@ -93,5 +100,24 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         performSegue(withIdentifier: "showDetail", sender: nil)
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+		guard currentPageNumber > 0 else { return }
+		guard maxPageCount > 0 else { return }
+		guard currentPageNumber + 1 <= maxPageCount else { return }
+		guard indexPath.row == movies.count-1 else { return }
+
+		if let query = searchBar.text {
+			TMDBClient.searchForMovie(query: query, page: currentPageNumber + 1) { (movieResults, error) in
+				if let movieResults = movieResults {
+					weak var searchVC = self
+					searchVC?.movies.append(contentsOf: movieResults.results)
+					searchVC?.tableView.reloadData()
+					searchVC?.currentPageNumber = movieResults.page
+					searchVC?.maxPageCount = movieResults.totalPages
+				}
+			}
+		}
+	}
     
 }
