@@ -10,7 +10,7 @@ import UIKit
 
 class LoginViewController: UIViewController {
 	
-	@IBOutlet weak var emailTextField: UITextField!
+	@IBOutlet weak var usernameTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var loginButton: UIButton!
 	@IBOutlet weak var loginViaWebsiteButton: UIButton!
@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		emailTextField.text = ""
+		usernameTextField.text = ""
 		passwordTextField.text = ""
 	}
 	
@@ -45,7 +45,7 @@ class LoginViewController: UIViewController {
 		} else {
 			activityIndicator.stopAnimating()
 		}
-		emailTextField.isEnabled = !loggingIn
+		usernameTextField.isEnabled = !loggingIn
 		passwordTextField.isEnabled = !loggingIn
 		loginButton.isEnabled = !loggingIn
 		loginViaWebsiteButton.isEnabled = !loggingIn
@@ -62,7 +62,7 @@ class LoginViewController: UIViewController {
 extension LoginViewController {
 	func handleRequestTokenResponse(success: Bool, error: Error?){
 		if success {
-			TMDBClient.login(username: self.emailTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLoginResponse(success:error:))
+			TMDBClient.login(username: self.usernameTextField.text ?? "", password: self.passwordTextField.text ?? "", completion: self.handleLoginResponse(success:error:))
 		} else {
 			setLoggingIn(false)
 			showLoginFailure(message: error?.localizedDescription ?? "")

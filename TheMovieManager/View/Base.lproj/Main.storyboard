@@ -33,13 +33,13 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="6au-LF-Utu">
                                 <rect key="frame" x="16" y="195.5" width="343" height="296"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Login with Email" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mar-mo-B2j">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Login with Username" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mar-mo-B2j" userLabel="Login with Username">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="32"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qrT-hl-seK" customClass="LoginTextField" customModule="TheMovieManager" customModuleProvider="target">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qrT-hl-seK" customClass="LoginTextField" customModule="TheMovieManager" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="44" width="343" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="k43-y2-3qE"/>
@@ -117,10 +117,10 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="WMn-Lf-WGT" id="KVb-Bi-dge"/>
-                        <outlet property="emailTextField" destination="qrT-hl-seK" id="kNU-Rr-pdO"/>
                         <outlet property="loginButton" destination="XfA-1k-xWc" id="gzO-wf-ODd"/>
                         <outlet property="loginViaWebsiteButton" destination="OHw-m7-7gh" id="Ghg-Tm-X1E"/>
                         <outlet property="passwordTextField" destination="R9P-8h-YZr" id="3kW-y3-iTs"/>
+                        <outlet property="usernameTextField" destination="qrT-hl-seK" id="kNU-Rr-pdO"/>
                         <segue destination="KyE-Nk-bg6" kind="presentation" identifier="completeLogin" id="aGP-QK-myr"/>
                     </connections>
                 </viewController>
