@@ -47,8 +47,8 @@ class TMDBClient {
 				case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
 				case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
 				case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-				case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
-				case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)"
+				case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)" + "&sort_by=created_at.desc"
+				case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)" + "&sort_by=created_at.asc"
 				case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
 				case .search(let movieQuery, let page): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
 			}
