@@ -17,4 +17,8 @@ extension UIViewController {
 			}
 		}
     }
+
+	func isDownloading(_ downloading: Bool) {
+		UIApplication.shared.isNetworkActivityIndicatorVisible = downloading
+	}
 }

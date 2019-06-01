@@ -53,7 +53,9 @@ extension WatchlistViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell")!
         
-        let movie = MovieModel.watchlist[indexPath.row]
+		isDownloading(true)
+
+		let movie = MovieModel.watchlist[indexPath.row]
 
 		cell.textLabel?.text = movie.title
 		cell.imageView?.image = UIImage(named: "MoviePlaceholder")
@@ -61,8 +63,12 @@ extension WatchlistViewController: UITableViewDataSource, UITableViewDelegate {
 		if let posterPath = movie.posterPath {
 			TMDBClient.downloadPosterImage(posterPath: posterPath) { (data, error) in
 				guard let data = data else { return }
+
+				unowned let watchlistVC = self
+
 				cell.imageView?.image = UIImage(data: data)
 				cell.setNeedsLayout()
+				watchlistVC.isDownloading(false)
 			}
 		}
         

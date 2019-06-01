@@ -38,7 +38,6 @@ class FavoritesViewController: UIViewController {
             detailVC.movie = MovieModel.favorites[selectedIndex]
         }
     }
-    
 }
 
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
@@ -53,6 +52,8 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell")!
+
+		isDownloading(true)
         
         let movie = MovieModel.favorites[indexPath.row]
         
@@ -62,8 +63,12 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
 		if let posterPath = movie.posterPath {
 			TMDBClient.downloadPosterImage(posterPath: posterPath) { (data, error) in
 				guard let data = data else { return }
+
+				unowned let favoritesVC = self
+
 				cell.imageView?.image = UIImage(data: data)
 				cell.setNeedsLayout()
+				favoritesVC.isDownloading(false)
 			}
 		}
         

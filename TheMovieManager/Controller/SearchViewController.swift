@@ -74,7 +74,9 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell")!
         
-        let movie = movies[indexPath.row]
+		isDownloading(true)
+
+		let movie = movies[indexPath.row]
         
         cell.textLabel?.text = "\(movie.title)"
 
@@ -87,8 +89,12 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 		if let posterPath = movie.posterPath {
 			TMDBClient.downloadPosterImage(posterPath: posterPath) { (data, error) in
 				guard let data = data else { return }
+
+				unowned let searchVC = self
+
 				cell.imageView?.image = UIImage(data: data)
 				cell.setNeedsLayout()
+				searchVC.isDownloading(false)
 			}
 		}
         
@@ -108,6 +114,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 		guard indexPath.row == movies.count-1 else { return }
 
 		if let query = searchBar.text {
+			isDownloading(true)
 			TMDBClient.searchForMovie(query: query, page: currentPageNumber + 1) { (movieResults, error) in
 				if let movieResults = movieResults {
 					weak var searchVC = self
@@ -117,6 +124,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 					searchVC?.maxPageCount = movieResults.totalPages
 				}
 			}
+			isDownloading(false)
 		}
 	}
     
