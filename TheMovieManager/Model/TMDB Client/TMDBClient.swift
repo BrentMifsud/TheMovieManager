@@ -50,7 +50,7 @@ class TMDBClient {
 				case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)" + "&sort_by=created_at.desc"
 				case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(Auth.sessionId)" + "&sort_by=created_at.asc"
 				case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
-				case .search(let movieQuery, let page): return Endpoints.base + "/search/movie" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
+				case .search(let movieQuery, let page): return Endpoints.base + "/search/\(MediaType.movie)" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
 			}
 		}
 
