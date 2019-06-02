@@ -12,18 +12,23 @@ class FavoritesViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var selectedIndex = 0
+	lazy var refresh: UIRefreshControl = {
+		let refreshControl = UIRefreshControl()
+		refreshControl.tintColor = .black
+		refreshControl.addTarget(self, action: #selector(refreshFavorites), for: .valueChanged)
+
+		return refreshControl
+	}()
+
+
+	var selectedIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		_ = TMDBClient.getFavorites() { movies, error in
-			MovieModel.favorites = movies
-			DispatchQueue.main.async {
-				self.tableView.reloadData()
-			}
-		}
-        
+		tableView.refreshControl = refresh
+
+		refreshFavorites()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,6 +43,24 @@ class FavoritesViewController: UIViewController {
             detailVC.movie = MovieModel.favorites[selectedIndex]
         }
     }
+
+	@objc func refreshFavorites() {
+		TMDBClient.getFavorites() { movies, error in
+			MovieModel.favorites = movies
+
+			unowned let favoriteVC = self
+
+			DispatchQueue.main.async {
+				favoriteVC.tableView.reloadData()
+			}
+
+			let deadline = DispatchTime.now() + .milliseconds(500)
+			DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
+				favoriteVC.refresh.endRefreshing()
+			})
+		}
+	}
+
 }
 
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {

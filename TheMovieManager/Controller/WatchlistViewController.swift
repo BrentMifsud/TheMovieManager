@@ -11,18 +11,23 @@ import UIKit
 class WatchlistViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
+
+	lazy var refresh: UIRefreshControl = {
+		let refreshControl = UIRefreshControl()
+		refreshControl.tintColor = .black
+		refreshControl.addTarget(self, action: #selector(refreshWatchlist), for: .valueChanged)
+
+		return refreshControl
+	}()
     
     var selectedIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+		tableView.refreshControl = refresh
         
-        _ = TMDBClient.getWatchlist() { movies, error in
-			MovieModel.watchlist = movies
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+        refreshWatchlist()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,7 +42,24 @@ class WatchlistViewController: UIViewController {
             detailVC.movie = MovieModel.watchlist[selectedIndex]
         }
     }
-    
+
+	@objc func refreshWatchlist() {
+		TMDBClient.getWatchlist() { movies, error in
+			MovieModel.watchlist = movies
+
+			unowned let watchlistVC = self
+
+			DispatchQueue.main.async {
+				watchlistVC.tableView.reloadData()
+			}
+
+			let deadline = DispatchTime.now() + .milliseconds(500)
+			DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
+				watchlistVC.refresh.endRefreshing()
+			})
+		}
+	}
+
 }
 
 extension WatchlistViewController: UITableViewDataSource, UITableViewDelegate {
