@@ -35,6 +35,12 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+		guard searchText.count > 0 else {
+			movies = [Movie]()
+			tableView.reloadData()
+			return
+		}
+
 		currentSearchTask?.cancel()
 		currentSearchTask = TMDBClient.searchForMovie(query: searchText) { (movieResults, error) in
 			if let movieResults = movieResults {
@@ -58,7 +64,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
-    
+
 }
 
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
