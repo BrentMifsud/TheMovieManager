@@ -40,17 +40,17 @@ class TMDBClient {
 
 		var stringValue: String {
 			switch self {
-				case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
-				case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
-				case .retrieveSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
-				case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
-				case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
+			case .getRequestToken: return Endpoints.base + "/authentication/token/new" + Endpoints.apiKeyParam
+			case .login: return Endpoints.base + "/authentication/token/validate_with_login" + Endpoints.apiKeyParam
+			case .retrieveSessionId: return Endpoints.base + "/authentication/session/new" + Endpoints.apiKeyParam
+			case .webAuth: return "https://www.themoviedb.org/authenticate/\(Auth.requestToken)?redirect_to=themoviemanager:authenticate"
+			case .deleteSession: return Endpoints.base + "/authentication/session" + Endpoints.apiKeyParam
 			case .getWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist/movies" + Endpoints.apiKeyParam + "&session_id=\(getSessionId())"
 			case .getFavorites: return Endpoints.base + "/account/\(Auth.accountId)/favorite/movies" + Endpoints.apiKeyParam + "&session_id=\(getSessionId())"
 			case .markWatchlist: return Endpoints.base + "/account/\(Auth.accountId)/watchlist" + Endpoints.apiKeyParam + "&session_id=\(getSessionId())" + "&sort_by=created_at.desc"
 			case .markFavorite: return Endpoints.base + "/account/\(Auth.accountId)/favorite" + Endpoints.apiKeyParam + "&session_id=\(getSessionId())" + "&sort_by=created_at.asc"
-				case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
-				case .search(let movieQuery, let page): return Endpoints.base + "/search/\(MediaType.movie)" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
+			case .getPosterImage(let posterPath): return Endpoints.basePoster + posterPath
+			case .search(let movieQuery, let page): return Endpoints.base + "/search/\(MediaType.movie)" + Endpoints.apiKeyParam + "&query=\(movieQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" + "&page=\(page)"
 			}
 		}
 
