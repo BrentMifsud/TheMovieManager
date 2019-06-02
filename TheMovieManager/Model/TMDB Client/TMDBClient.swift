@@ -11,7 +11,6 @@ import UIKit
 
 class TMDBClient {
 
-	static let apiKey = "ENTER API KEY HERE"
 	static let encoder = JSONEncoder()
 	static let decoder = JSONDecoder()
 
