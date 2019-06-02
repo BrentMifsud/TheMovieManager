@@ -22,6 +22,16 @@ class LoginViewController: UIViewController {
 		usernameTextField.text = ""
 		passwordTextField.text = ""
 	}
+
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+
+		let sessionId = TMDBClient.getSessionId()
+
+		if !sessionId.isEmpty {
+			performSegue(withIdentifier: "completeLogin", sender: nil)
+		}
+	}
 	
 	@IBAction func loginTapped(_ sender: UIButton) {
 		setLoggingIn(true)
@@ -71,7 +81,7 @@ extension LoginViewController {
 
 	func handleLoginResponse(success: Bool, error: Error?) {
 		if success {
-			TMDBClient.getSessionId(completion: self.handleSessionIDResponse(success:error:))
+			TMDBClient.requestSessionId(completion: self.handleSessionIDResponse(success:error:))
 		} else {
 			setLoggingIn(false)
 			showLoginFailure(message: error?.localizedDescription ?? "")
