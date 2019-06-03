@@ -9,5 +9,5 @@
 import Foundation
 
 extension TMDBClient {
-	static let apiKey = "ENTER API KEY HERE"
+	static let apiKey = "5598ba925c36058fe5a243b82b73b1f8"
 }
