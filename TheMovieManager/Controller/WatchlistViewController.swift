@@ -12,7 +12,7 @@ class WatchlistViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
 
-	lazy var refresh: UIRefreshControl = {
+	lazy var refreshControl: UIRefreshControl = {
 		let refreshControl = UIRefreshControl()
 		refreshControl.tintColor = .black
 		refreshControl.addTarget(self, action: #selector(refreshWatchlist), for: .valueChanged)
@@ -25,7 +25,7 @@ class WatchlistViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		tableView.refreshControl = refresh
+		tableView.refreshControl = refreshControl
         
         refreshWatchlist()
     }
@@ -55,7 +55,7 @@ class WatchlistViewController: UIViewController {
 
 			let deadline = DispatchTime.now() + .milliseconds(500)
 			DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
-				watchlistVC.refresh.endRefreshing()
+				watchlistVC.refreshControl.endRefreshing()
 			})
 		}
 	}
