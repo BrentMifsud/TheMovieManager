@@ -44,6 +44,8 @@ class WatchlistViewController: UIViewController {
     }
 
 	@objc func refreshWatchlist() {
+		isDownloading(true)
+		
 		TMDBClient.getWatchlist() { movies, error in
 			MovieModel.watchlist = movies
 
@@ -51,6 +53,7 @@ class WatchlistViewController: UIViewController {
 
 			DispatchQueue.main.async {
 				watchlistVC.tableView.reloadData()
+				watchlistVC.isDownloading(false)
 			}
 
 			let deadline = DispatchTime.now() + .milliseconds(500)
